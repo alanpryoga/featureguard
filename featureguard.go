@@ -6,15 +6,25 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+var (
+	defaultRedisKeyPrefix = "featureguard:"
+)
+
 // FeatureGuard represents a feature flags management system using Redis as the storage backend.
 type FeatureGuard struct {
-	db *redis.Client
+	client    *redis.Client
+	keyPrefix string
 }
 
-// NewFeatureGuard initializes a new FeatureGuard instance with the provided Redis client connection.
-func NewFeatureGuard(db *redis.Client) *FeatureGuard {
+// NewFeatureGuard initializes a new FeatureGuard instance with the provided Redis client connection and key prefix.
+func NewFeatureGuard(redisClient *redis.Client, redisKeyPrefix string) *FeatureGuard {
+	if redisKeyPrefix == "" {
+		redisKeyPrefix = defaultRedisKeyPrefix
+	}
+
 	return &FeatureGuard{
-		db: db,
+		client:    redisClient,
+		keyPrefix: redisKeyPrefix,
 	}
 }
 
